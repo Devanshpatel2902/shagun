@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Shagun! - ComedyCulture</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Inter font -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fc;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- Main App Container -->
+    <div id="app" class="w-full max-w-2xl bg-white rounded-xl shadow-2xl p-6 md:p-10 border-4 border-dashed border-orange-400 transition-all duration-500">
+        
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between mb-6" id="nav-buttons">
+            <button onclick="prevPage()" id="prev-btn" class="px-4 py-2 bg-gray-200 text-gray-700 font-semibold rounded-full hover:bg-gray-300 transition-colors shadow-inner flex items-center disabled:opacity-50" disabled>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                Back
+            </button>
+            <button onclick="nextPage()" id="next-btn" class="px-6 py-2 bg-teal-600 text-white font-bold rounded-full hover:bg-teal-700 transition-colors shadow-lg shadow-teal-300 flex items-center">
+                Next <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+            </button>
+        </div>
+
+        <!-- Page Content Area -->
+        <div id="page-container" class="min-h-[400px]">
+            <!-- Content will be rendered here by JavaScript -->
+        </div>
+
+        <!-- Hidden Loading Indicator (Kept hidden, but structure maintained for future use) -->
+        <div id="loading-spinner" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="flex flex-col items-center p-6 bg-white rounded-xl shadow-2xl">
+                <svg class="animate-spin -ml-1 mr-3 h-8 w-8 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="mt-3 text-lg font-medium text-gray-700">Executing Contract Clauses...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Global state for navigation
+        let currentPage = 0;
+        const totalPages = 3; // UPDATED: Intro, Messages, Final Gift
+        const apiKey = ""; 
+
+        // --- Core Application Logic ---
+
+        // Pages Data Structure - UPDATED: Contract page removed.
+        const pages = [
+            { id: 'intro', title: 'A ComedyCulture Special Delivery!', render: renderIntroPage },
+            { id: 'messages', title: 'The Hall of Fame (of Love)', render: renderMessagesPage },
+            { id: 'gift', title: 'Your Grand Finale Gift', render: renderGiftPage } // Updated title for impact
+        ];
+
+        function renderPage() {
+            const container = document.getElementById('page-container');
+            const pageData = pages[currentPage];
+
+            // Update Header and Content
+            container.innerHTML = `
+                <h2 class="text-3xl md:text-4xl font-extrabold text-center text-teal-700 mb-6 border-b-2 pb-2 border-teal-100">${pageData.title}</h2>
+                <div id="${pageData.id}-content"></div>
+            `;
+            
+            // Execute the specific page renderer
+            pageData.render();
+
+            // Update Navigation Buttons
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            
+            prevBtn.disabled = currentPage === 0;
+
+            if (currentPage === totalPages - 1) { // Last Page (Index 2)
+                nextBtn.innerHTML = 'Finish <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>';
+                nextBtn.onclick = () => showMessageBox("Finished!", "Thank you for visiting Shagun's Birthday Site! 🎉 The celebration continues offline!", "teal");
+            } else if (currentPage === totalPages - 2) { // Page before last (Index 1 - Messages)
+                 nextBtn.innerHTML = 'Next (The Gift!) <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>';
+                 nextBtn.onclick = nextPage;
+            } else { // First Page (Index 0 - Intro)
+                nextBtn.innerHTML = 'Next <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>';
+                nextBtn.onclick = nextPage;
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                renderPage();
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                renderPage();
+            }
+        }
+
+        // --- Page Render Functions ---
+
+        function renderIntroPage() {
+            document.getElementById('intro-content').innerHTML = `
+                <div class="text-center space-y-4">
+                    <p class="text-6xl animate-bounce">🥳</p>
+                    <h1 class="text-4xl md:text-6xl font-black text-orange-600 tracking-tighter">
+                        HAPPY BIRTHDAY SHAGUN!
+                    </h1>
+                    <p class="text-xl text-gray-700 font-medium">
+                        From your favorite team, ComedyCulture!
+                    </p>
+                    <p class="text-lg text-gray-500 max-w-lg mx-auto pt-4">
+                        TBH kuch khaas nahi hai aage AI is not that advanced yet.
+                    </p>
+                    <button onclick="nextPage()" class="mt-8 bg-orange-500 text-white px-8 py-3 rounded-full text-xl font-bold shadow-xl hover:bg-orange-600 transition-all transform hover:scale-105">
+                        Start the Party!
+                    </button>
+                </div>
+            `;
+        }
+
+        function renderMessagesPage() {
+            const messages = [
+                { sender: "The Funniest One", message: "Shagun, you're the only person who can make a typo sound like a clever literary device. Happy Birthday! Now, please fix my terrible caption." },
+                { sender: "The Coffee Supplier", message: "To the Queen of Copy: May your coffee always be strong and your deadlines always be distant. Thanks for making our 'meh' ideas sound like Pulitzer winners!" },
+                { sender: "The Editor (aka The Scapegoat)", message: "You turn lead into gold, and our briefs into actual coherent content. Have a fantastic day, and please never leave us." },
+                { sender: "The Team Lead", message: "Happy Birthday! We would write a better message, but honestly, you'd just edit it to be funnier. So, enjoy the day, you legend!" },
+                { sender: "Your Secret Admirer", message: "They say 'a picture is worth a thousand words.' You write a single word that's worth a thousand pictures. Celebrate hard!" }
+            ];
+
+            // Changed from yellow to a soft orange/coral theme
+            const messageHtml = messages.map(m => `
+                <div class="bg-orange-50 p-4 rounded-lg shadow-md border-l-4 border-orange-400 mb-4 transform transition-all hover:scale-[1.01] hover:shadow-lg">
+                    <p class="text-gray-800 italic">"${m.message}"</p>
+                    <p class="mt-2 text-sm text-orange-700 font-bold">- ${m.sender}</p>
+                </div>
+            `).join('');
+
+            document.getElementById('messages-content').innerHTML = `
+                <div class="max-h-80 overflow-y-auto p-2">
+                    ${messageHtml}
+                </div>
+                <p class="mt-6 text-center text-lg text-gray-600 font-medium">
+                    P.S. We all pitched in for the messages. But don't worry, we didn't use an AI. Yet.
+                </p>
+            `;
+        }
+        
+        // REMOVED: renderContractPage
+
+        // NEW LOGICAL GIFT PAGE: Final Gift Page
+        function renderGiftPage() {
+            document.getElementById('gift-content').innerHTML = `
+                <div class="text-center space-y-4">
+                    <p class="text-6xl">🏆🎉💼</p>
+                    <h1 class="text-4xl font-extrabold text-teal-600">The Grand Finale: Reward for Excellence!</h1>
+                    <p class="text-xl text-gray-700 font-medium">
+                        We've saved the best for last. No more unnecessary documents, just pure, logical appreciation for the only person who can nail the tone every single time.
+                    </p>
+                    <div class="p-6 bg-teal-50 rounded-xl shadow-inner border-4 border-orange-300 transform rotate-2 hover:rotate-0 transition-all duration-300">
+                        <h3 class="text-2xl font-bold text-orange-700 mb-4">Your Birthday Bonanza Includes:</h3>
+                        <ul class="list-none text-teal-800 space-y-3">
+                            <li class="flex items-center justify-center text-lg font-semibold">
+                                <span class="text-orange-500 text-2xl mr-3">🗓️</span> A Paid "Creative Day" Off: Use it for anything non-work related—writing your own novel, painting, binge-watching or just thanking me for this gift.
+                            </li>
+                            <li class="flex items-center justify-center text-lg font-semibold">
+                                <span class="text-orange-500 text-2xl mr-3">🥳</span> The Celebration: Your choice of cuisine, your choice of place, your choice of time, just only you and yourself...enjoy!
+                            </li>
+                        </ul>
+                    </div>
+                    <p class="text-2xl pt-4 font-black text-orange-600 animate-pulse">
+                        Happy Birthday once again, Shagun!<br>We're lucky to have your words!
+                    </p>
+                </div>
+            `;
+        }
+        
+        // --- Utility Functions ---
+
+        // Custom Message Box instead of alert()
+        function showMessageBox(title, message, color = 'red') {
+            const overlay = document.createElement('div');
+            overlay.className = 'fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50';
+            overlay.innerHTML = `
+                <div class="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full border-t-8 border-${color}-500">
+                    <h3 class="text-xl font-bold text-${color}-700 mb-3">${title}</h3>
+                    <p class="text-gray-700">${message}</p>
+                    <button onclick="this.closest('.fixed').remove()" class="mt-4 w-full bg-${color}-500 text-white font-semibold py-2 rounded-lg hover:bg-${color}-600 transition-colors">
+                        Close
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+        }
+
+        // --- Fetch helper kept for completeness, though not strictly used in this version ---
+
+        async function fetchWithExponentialBackoff(url, options, maxRetries = 5) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        if (response.status === 429 && i < maxRetries - 1) { // Rate limit
+                            const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            continue;
+                        }
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response;
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error;
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+        
+        // Initialize the app
+        window.onload = () => {
+            renderPage();
+        };
+
+    </script>
+</body>
+</html>
